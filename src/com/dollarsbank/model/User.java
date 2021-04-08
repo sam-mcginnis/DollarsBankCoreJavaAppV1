@@ -52,10 +52,10 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public List getAccounts() {
+	public List<BankAccount> getAccounts() {
 		return accounts;
 	}
-	public void setAccounts(List accounts) {
+	public void setAccounts(List<BankAccount> accounts) {
 		this.accounts = accounts;
 	}
 	public void addAccount(BankAccount account) {
@@ -63,8 +63,8 @@ public class User {
 	}
 	@Override
 	public String toString() {
-		return "User [name=" + name + ", address=" + address + ", phoneNumber=" + phoneNumber + ", id=" + id
-				+ ", password=" + password + ", accounts=" + accounts + "]";
+		return "Username- " + name + "\nAddress- " + address + "\nPhone Number- " + phoneNumber + "\nUser Id- " + id
+				+ "\nPassword- " + password + "\nAccounts- " + accounts;
 	}
 	
 	

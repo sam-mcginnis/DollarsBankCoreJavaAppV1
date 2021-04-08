@@ -1,41 +1,47 @@
 package com.dollarsbank.model;
 
 public class BankAccount {
-	private float deposit;
+	private float balance;
 	private String accountNumber;
 	private String accountType;
 	
 	public BankAccount() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
-	public BankAccount(float deposit, String accountNumber, String accountType) {
+	public BankAccount(float initalDeposit, String accountNumber, String accountType) {
 		super();
-		this.deposit = deposit;
+		balance = initalDeposit;
 		this.accountNumber = accountNumber;
 		this.accountType = accountType;
 	}
-	public float getDeposit() {
-		return deposit;
+	public float getBalance() {
+		return balance;
 	}
-	public void setDeposit(float deposit) {
-		this.deposit = deposit;
+	public void Deposit(float deposit) {
+		balance += deposit;
+		System.out.println("Deposit succefully made!\nBALANCE- $" + balance);
+
+	}
+	public void Withdrawl(float withdrawl) {
+		if(withdrawl > balance) {
+			System.out.println("You dont now have enough to withdrawl " + withdrawl 
+					+ "\nBALANCE- $" + balance);
+		}
+		else {
+			this.balance -=  balance;
+			System.out.println("Withdrawl succefully made!\nBALANCE- $" + balance);
+		}
+		
 	}
 	public String getAccountNumber() {
 		return accountNumber;
 	}
-	public void setAccountNumber(String accountNumber) {
-		this.accountNumber = accountNumber;
-	}
 	public String getAccountType() {
 		return accountType;
 	}
-	public void setAccountType(String accountType) {
-		this.accountType = accountType;
-	}
 	@Override
 	public String toString() {
-		return "BankAccount [deposit=" + deposit + ", accountNumber=" + accountNumber + ", accountType=" + accountType
+		return "BankAccount [balance=" + balance + ", accountNumber=" + accountNumber + ", accountType=" + accountType
 				+ "]";
 	}
 		

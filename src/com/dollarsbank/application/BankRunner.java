@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.dollarsbank.controller.DollarsBankController;
+import com.dollarsbank.model.BankAccount;
 import com.dollarsbank.model.User;
 
 public class BankRunner {
@@ -47,7 +48,8 @@ public class BankRunner {
 			else if(input == 2) {
 				scan.nextLine();
 				User user = DBC.Login(users);
-				DBC.CustomerHomePage(user);
+				BankAccount account = DBC.CustomerHomePage(user);
+				DBC.AccountActions(user, account);
 			}
 			else if(input == 3) {
 				scan.close();
