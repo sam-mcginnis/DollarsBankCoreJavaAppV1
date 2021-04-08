@@ -40,17 +40,14 @@ public class BankRunner {
 					users.add(user);
 				}
 				else {
-					System.out.println("The account with user id-" + user.getId() + " already exists!\n\n\n");
+					System.out.println("The account with user id-" + user.getId() + " already exists!\nPlease login!\n\n");
 				}
 				
 			}
 			else if(input == 2) {
 				scan.nextLine();
-				while(true) {
-					if(DBC.Login(users) != null) {
-						break;
-					}
-				}
+				User user = DBC.Login(users);
+				DBC.CustomerHomePage(user);
 			}
 			else if(input == 3) {
 				scan.close();

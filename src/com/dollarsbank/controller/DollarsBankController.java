@@ -7,10 +7,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import com.dollarsbank.model.BankAccount;
 import com.dollarsbank.model.User;
 
 public class DollarsBankController {
 	private Scanner scan;
+	private enum accountType {
+		SAVINGS, CHECKINGS
+	}
 	//private List<User>users;
 
 
@@ -102,8 +106,62 @@ public class DollarsBankController {
 		System.out.println("+-------------------+");
 		System.out.println("1. Open New Account");
 		System.out.println("2. Access Account");
+		System.out.println("3. Sign Out");
 		
 		int input = scan.nextInt();
+		if(input == 1) {
+			scan.nextLine();
+			System.out.print("Add Account Number: ");
+			String accNum = scan.nextLine();
+			System.out.println("What type of Account would you like to open?\n1. Checkings\n2.Savings");
+			int accType = scan.nextInt();
+			System.out.println("Initial Deposit Amount:");
+			float accDeposit = scan.nextFloat();
+			
+			if(accType == 1) {
+				BankAccount account = new BankAccount(accDeposit, accNum, "CHECKINGS");
+				user.addAccount(account);
+				System.out.println("Checkings Account Succefully Created!");
+			}
+			else if(accType == 2) {
+				BankAccount account = new BankAccount(accDeposit, accNum, "SAVINGS");
+				user.addAccount(account);
+				System.out.println("Savings Account Succefully Created!");
+			}
+			
+		}
+		else if(input == 2) {
+			scan.nextLine();
+			System.out.print("Please Enter Account Number: ");
+			String accNum = scan.nextLine();
+			List<BankAccount> accounts = user.getAccounts();
+			for(BankAccount account: accounts) {
+				if(account.getAccountNumber().equals(accNum)) {
+					AccountActions(account);
+				}
+			}
+			
+			System.out.println("This Account doesn't exist!\n Please make an account ot try again.");
+		}
+		else if(input == 3) {
+			
+		}
+		else {
+			System.out.println("Not a valid choice, try again!");
+		}
+		
+	}
+	public void AccountActions(BankAccount account) {
+		System.out.println("+-------------------+");
+		System.out.println("| WELCOME Customer! |");
+		System.out.println("+-------------------+\n");
+		System.out.println(account.getAccountType() + " Account- " + account.getAccountNumber());
+		System.out.println("\n1. Deposit Amount");
+		System.out.println("2. Withdraw Amount");
+		System.out.println("3. Funds Transfer");
+		System.out.println("4. View 5 Recent Transactions");
+		System.out.println("5. Display Customer Information");
+		System.out.println("6. Sign Out");
 		
 	}
 }
