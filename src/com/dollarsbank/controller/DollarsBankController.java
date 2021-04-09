@@ -211,6 +211,7 @@ public class DollarsBankController {
 				
 			}
 			else if(input == 4) {
+				//start transaction
 				
 			}
 			else if(input == 5) {
