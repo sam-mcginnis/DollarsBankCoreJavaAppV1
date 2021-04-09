@@ -49,7 +49,12 @@ public class BankRunner {
 				scan.nextLine();
 				User user = DBC.Login(users);
 				BankAccount account = DBC.CustomerHomePage(user);
-				DBC.AccountActions(user, account);
+				if(account == null) {
+					continue;
+				}
+				else {
+					DBC.AccountActions(user, account);
+				}
 			}
 			else if(input == 3) {
 				scan.close();

@@ -1,5 +1,6 @@
 package com.dollarsbank.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -54,13 +55,13 @@ public class DollarsBankController {
 		System.out.println("+--------------------------------+");
 		System.out.println("| Enter Details For New Account! |");
 		System.out.println("+--------------------------------+");
-		System.out.println("Customer Name:");
+		System.out.print("Customer Name: ");
 		String name = scan.nextLine();
-		System.out.println("Customer Address:");
+		System.out.print("Customer Address: ");
 		String address = scan.nextLine();
-		System.out.println("Customer Phone Number:");
+		System.out.print("Customer Phone Number: ");
 		String phoneNumber = scan.nextLine();
-		System.out.println("User Id :");
+		System.out.print("User Id: ");
 		String id = scan.nextLine();
 		System.out.println("Password: 8 Characters With Lower, Upper & Special");
 
@@ -83,9 +84,9 @@ public class DollarsBankController {
 			System.out.println("| Enter Login Details! |");
 			System.out.println("+----------------------+");
 			
-			System.out.println("User Id :");
+			System.out.print("User Id: ");
 			String id = scan.nextLine();
-			System.out.println("Password :");
+			System.out.print("Password: ");
 			String password = scan.nextLine();
 			
 			for(User user: users) {
@@ -108,9 +109,9 @@ public class DollarsBankController {
 			int input = scan.nextInt();
 			if(input == 1) {
 				scan.nextLine();
-				System.out.print("Add Account Number: ");
+				System.out.print("Enter New Acount ID: ");
 				String accNum = scan.nextLine();
-				System.out.println("What type of Account would you like to open?\n1. Checkings\n2.Savings");
+				System.out.println("What type of Account would you like to open?\n1.Checkings\n2.Savings");
 				int accType = scan.nextInt();
 				System.out.println("Initial Deposit Amount:");
 				float accDeposit = scan.nextFloat();
@@ -129,73 +130,103 @@ public class DollarsBankController {
 			}
 			else if(input == 2) {
 				scan.nextLine();
-				System.out.print("Please Enter Account Number: ");
-				String accNum = scan.nextLine();
-				List<BankAccount> accounts = user.getAccounts();
-				for(BankAccount account: accounts) {
-					if(account.getAccountNumber().equals(accNum)) {
-						return account;
+				System.out.println("Your Accounts");
+				System.out.println("-------------");
+				List <BankAccount> accs = user.getAccounts();		
+				if(accs.isEmpty()) {
+					System.out.println("You have no bank accounts");
+					return null;
+				}
+				else {
+					while(true) {
+						accs.stream().forEach(s -> System.out.println(s.getAccountNumber()));
+						
+						System.out.print("\nPlease Enter Account ID: ");
+						String accNum = scan.nextLine();
+						for(BankAccount acc: accs) {
+							if(acc.getAccountNumber().equals(accNum)) {
+								return acc;
+							}
+						}
+						System.out.println("This Account doesn't exist!\nPlease make an account or try again.");
 					}
 				}
-				
-				System.out.println("This Account doesn't exist!\n Please make an account ot try again.");
 			}
 			else if(input == 3) {
-				return null;
+				break;
 			}
 			else {
 				System.out.println("Not a valid choice, try again!");
 			}
-		}	
+		}
+		return null;
 	}
 	public void AccountActions(User user, BankAccount account) {
-		System.out.println("+-------------------+");
-		System.out.println("| WELCOME Customer! |");
-		System.out.println("+-------------------+\n");
-		System.out.println(account.getAccountType() + " Account- " + account.getAccountNumber());
-		System.out.println("\n1. Deposit Amount");
-		System.out.println("2. Withdraw Amount");
-		System.out.println("3. Funds Transfer");
-		System.out.println("4. View 5 Recent Transactions");
-		System.out.println("5. Display Customer Information");
-		System.out.println("6. Sign Out");
-		
-		int input = scan.nextInt();
-		if(input == 1) {
-			System.out.print("Enter deposit amount: ");
-			float deposit = scan.nextFloat();
-			account.Deposit(deposit);
-		}
-		else if(input == 2) {
-			System.out.print("Enter withdrawl amount: ");
-			float withdrawl = scan.nextFloat();
-			account.Withdrawl(withdrawl);
-		}
-		else if(input == 3) {
-			System.out.println("What account would you like to send funds too");
-			List <BankAccount> accs = user.getAccounts();
-			int count = 1;
-			for(BankAccount acc : accs) {
-				System.out.println(count + ". " + acc.getAccountNumber());
+		while(true) {
+			System.out.println("+-------------------+");
+			System.out.println("| WELCOME Customer! |");
+			System.out.println("+-------------------+\n");
+			System.out.println(account.getAccountType() + " Account- " + account.getAccountNumber());
+			System.out.println("\n1. Deposit Amount");
+			System.out.println("2. Withdraw Amount");
+			System.out.println("3. Funds Transfer");
+			System.out.println("4. View 5 Recent Transactions");
+			System.out.println("5. Display Customer Information");
+			System.out.println("6. Sign Into Other Account");
+			
+			int input = scan.nextInt();
+			if(input == 1) {
+				System.out.print("Enter deposit amount: ");
+				float deposit = scan.nextFloat();
+				account.Deposit(deposit);
+			}
+			else if(input == 2) {
+				System.out.print("Enter withdrawl amount: ");
+				float withdrawl = scan.nextFloat();
+				account.Withdrawl(withdrawl);
+			}
+			else if(input == 3) {
+				scan.nextLine();
+				System.out.println("What account would you like to send funds too\n");
+				
+				List <BankAccount> accs = user.getAccounts();			
+				accs.stream().forEach(s -> System.out.println(s.getAccountNumber()));
+				
+				System.out.print("\nEnter Account- ");
+				String accNumber = scan.nextLine();
+				
+				for(BankAccount acc: accs) {
+					if(acc.getAccountNumber().equals(accNumber)) {
+
+						System.out.print("How much would you like to transer from " + account.getAccountType() + 
+								" " + account.getAccountNumber() + " to " + acc.getAccountType() + " " + acc.getAccountNumber());
+						float transferAmount = scan.nextFloat();
+						if(account.Withdrawl(transferAmount)) {
+							acc.Deposit(transferAmount);
+							break;
+						}
+					}
+				}
+				System.out.println("This Account doesn't exist!\nPlease make an account or try again.");
 				
 			}
-		}
-		else if(input == 4) {
-			
-		}
-		else if(input == 5) {
-			System.out.println("+-----------------------+");
-			System.out.println("| Customer Information! |");
-			System.out.println("+-----------------------+\n");
-			user.toString();
-		}
-		else if(input == 6) {
-			
-		}
-		else {
-			System.out.println("Not a valid choice, Try Again!");
-		}
+			else if(input == 4) {
+				
+			}
+			else if(input == 5) {
+				System.out.println("+-----------------------+");
+				System.out.println("| Customer Information! |");
+				System.out.println("+-----------------------+\n");
+				System.out.println(user.toString());
+			}
+			else if(input == 6) {
+				CustomerHomePage(user);
+			}
+			else {
+				System.out.println("Not a valid choice, Try Again!");
+			}
 
-		
+
+		}		
 	}
 }

@@ -22,14 +22,16 @@ public class BankAccount {
 		System.out.println("Deposit succefully made!\nBALANCE- $" + balance);
 
 	}
-	public void Withdrawl(float withdrawl) {
+	public boolean Withdrawl(float withdrawl) {
 		if(withdrawl > balance) {
-			System.out.println("You dont now have enough to withdrawl " + withdrawl 
+			System.out.println("You dont not have enough to withdrawl " + withdrawl 
 					+ "\nBALANCE- $" + balance);
+			return false;
 		}
 		else {
-			this.balance -=  balance;
+			this.balance -=  withdrawl;
 			System.out.println("Withdrawl succefully made!\nBALANCE- $" + balance);
+			return true;
 		}
 		
 	}
