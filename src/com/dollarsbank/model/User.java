@@ -1,7 +1,9 @@
 package com.dollarsbank.model;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class User {
 	private String name;
@@ -10,6 +12,7 @@ public class User {
 	private String id;
 	private String password;
 	private List<BankAccount> accounts;
+	private Queue<String> que;
 	public User() {
 		super();
 	}
@@ -21,6 +24,7 @@ public class User {
 		this.id = id;
 		this.password = password;
 		accounts = new ArrayList<BankAccount>();
+		que = new LinkedList<>();
 	}
 	public String getName() {
 		return name;
@@ -55,11 +59,29 @@ public class User {
 	public List<BankAccount> getAccounts() {
 		return accounts;
 	}
-	public void setAccounts(List<BankAccount> accounts) {
-		this.accounts = accounts;
-	}
 	public void addAccount(BankAccount account) {
 		accounts.add(account);
+	}
+	public void addQue(String transaction) {
+		
+		if(que.size() >= 5) {
+			que.remove();
+			que.add(transaction);
+		}
+		else {
+			que.add(transaction);
+		}
+	}
+	public void showQue() {
+		System.out.println("+----------------------+");
+		System.out.println("| Transaction History! |");
+		System.out.println("+----------------------+\n");
+		if(que.isEmpty()) {
+			System.out.println("You have no transaction history!");
+		}
+		else {
+			que.forEach(System.out::println);
+		}
 	}
 	@Override
 	public String toString() {

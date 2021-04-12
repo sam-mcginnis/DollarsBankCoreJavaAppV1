@@ -1,5 +1,6 @@
 package com.dollarsbank.controller;
 
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -10,8 +11,7 @@ import com.dollarsbank.model.BankAccount;
 import com.dollarsbank.model.User;
 
 public class DollarsBankController {
-	private Scanner scan;
-	
+	private Scanner scan;	
 	//private List<User>users;
 
 
@@ -23,6 +23,7 @@ public class DollarsBankController {
 	public DollarsBankController(Scanner scan) {
 		super();
 		this.scan = scan;
+	
 		//users = new ArrayList<User>();
 	}
 	public static boolean isValidPassword(String password)
@@ -98,6 +99,7 @@ public class DollarsBankController {
 		}
 	}
 	public BankAccount CustomerHomePage(User user) {
+		
 		while(true) {
 			System.out.println("+-------------------+");
 			System.out.println("| WELCOME Customer! |");
@@ -116,16 +118,27 @@ public class DollarsBankController {
 				System.out.println("Initial Deposit Amount:");
 				float accDeposit = scan.nextFloat();
 				
-				if(accType == 1) {
-					BankAccount account = new BankAccount(accDeposit, accNum, "CHECKINGS");
-					user.addAccount(account);
-					System.out.println("Checkings Account Succefully Created!");
+				List <BankAccount> accs = user.getAccounts();		
+				boolean duplicateAccount = accs.stream().anyMatch(s -> s.getAccountNumber().equals(accNum));
+				
+				if(!duplicateAccount) {
+					if(accType == 1) {
+						BankAccount account = new BankAccount(accDeposit, accNum, "CHECKINGS");
+						user.addAccount(account);
+						user.addQue("INITIAL TRANSACTION: Deposit of $" + accDeposit + " made to CHECKINGS account- " + accNum);
+						System.out.println("Checkings Account Succefully Created!");
+					}
+					else if(accType == 2) {
+						BankAccount account = new BankAccount(accDeposit, accNum, "SAVINGS");
+						user.addAccount(account);
+						System.out.println("Savings Account Succefully Created!");
+					}
+				
 				}
-				else if(accType == 2) {
-					BankAccount account = new BankAccount(accDeposit, accNum, "SAVINGS");
-					user.addAccount(account);
-					System.out.println("Savings Account Succefully Created!");
+				else {
+					System.out.println("The account with account id-" +accNum + " already exists!\n");
 				}
+				
 				
 			}
 			else if(input == 2) {
@@ -135,7 +148,7 @@ public class DollarsBankController {
 				List <BankAccount> accs = user.getAccounts();		
 				if(accs.isEmpty()) {
 					System.out.println("You have no bank accounts");
-					return null;
+					continue;
 				}
 				else {
 					while(true) {
@@ -153,13 +166,12 @@ public class DollarsBankController {
 				}
 			}
 			else if(input == 3) {
-				break;
+				return null;
 			}
 			else {
 				System.out.println("Not a valid choice, try again!");
 			}
 		}
-		return null;
 	}
 	public void AccountActions(User user, BankAccount account) {
 		while(true) {
@@ -176,14 +188,18 @@ public class DollarsBankController {
 			
 			int input = scan.nextInt();
 			if(input == 1) {
+				
 				System.out.print("Enter deposit amount: ");
 				float deposit = scan.nextFloat();
 				account.Deposit(deposit);
+				user.addQue("Deposit in " + account.getAccountType() + " Account- " + account.getAccountNumber() + " +$" + deposit);
 			}
 			else if(input == 2) {
 				System.out.print("Enter withdrawl amount: ");
 				float withdrawl = scan.nextFloat();
-				account.Withdrawl(withdrawl);
+				if(account.Withdrawl(withdrawl)) {
+					user.addQue("Withdrawl from " + account.getAccountType() + " Account- " + account.getAccountNumber() + " -$" + withdrawl);
+				}
 			}
 			else if(input == 3) {
 				scan.nextLine();
@@ -196,14 +212,19 @@ public class DollarsBankController {
 				String accNumber = scan.nextLine();
 				
 				for(BankAccount acc: accs) {
-					if(acc.getAccountNumber().equals(accNumber)) {
+					if(account.getAccountNumber().equals(accNumber)) {
+						System.out.println("You cannot transer fund between the same bank account!");
+						AccountActions(user, account);
+					}
+					else if(acc.getAccountNumber().equals(accNumber)) {
 
 						System.out.print("How much would you like to transer from " + account.getAccountType() + 
-								" " + account.getAccountNumber() + " to " + acc.getAccountType() + " " + acc.getAccountNumber());
+								" " + account.getAccountNumber() + " to " + acc.getAccountType() + " " + acc.getAccountNumber() + ": ");
 						float transferAmount = scan.nextFloat();
 						if(account.Withdrawl(transferAmount)) {
 							acc.Deposit(transferAmount);
-							break;
+							user.addQue("Transfer made from " + account.getAccountType() + "- " + account.getAccountNumber() + " to " + acc.getAccountType() + "- " + acc.getAccountNumber() + "\nAMOUNT- $" + transferAmount);
+							AccountActions(user, account);
 						}
 					}
 				}
@@ -211,7 +232,7 @@ public class DollarsBankController {
 				
 			}
 			else if(input == 4) {
-				//start transaction
+				user.showQue();
 				
 			}
 			else if(input == 5) {
@@ -221,7 +242,10 @@ public class DollarsBankController {
 				System.out.println(user.toString());
 			}
 			else if(input == 6) {
-				CustomerHomePage(user);
+				
+				if(CustomerHomePage(user) == null) {
+					return;
+				}
 			}
 			else {
 				System.out.println("Not a valid choice, Try Again!");
